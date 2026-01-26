@@ -25,6 +25,8 @@ A heavy work in progress port of gamemaker to several consoles (3ds only current
 - Pretty much everything else
 
 ## compiling
+(theres a pre compiled 3dsx and cia inside the output folder \Runners\3DS\output)
+
 compiling is currently only recommended with the test project, anything else is almost guaranteed not to work (for now)
 this assumes you have devkitpro and citro2d installed
 
