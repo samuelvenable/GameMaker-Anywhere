@@ -1,2 +1,2 @@
 # GameMaker Anywhere
-Play gamemaker games on 3ds!
+A heavy work in progress port of gamemaker to several consoles (3ds only currently)
