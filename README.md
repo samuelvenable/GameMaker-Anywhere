@@ -4,7 +4,7 @@
 
 ## Info
 <p align="left">
-A heavy work in progress port of gamemaker to several consoles (3ds only currently) using devkitpro and C.
+A work in progress open source port of gamemaker to several consoles (3ds only currently) using devkitpro and C.
 </p>
 
 <br>
@@ -19,12 +19,19 @@ Feel free to contribute! (i really need the help...)
 ### Complete
 - Setting X and Y
 - if statements
-- Addition and subtraction  
+- Addition and subtraction
+- Room width and height
+- room background colors
+- Object and Asset drawing
 
 ### Todo (sorted from least to most needed)
-- "&&" and "||" need to be added
-- Pretty much everything else
-
+- "&&" and "||"
+- custom variable stuff
+- rooms (should be pretty easy)
+- instance_create_depth and layer
+- scripts
+- object referencing
+- port to other platforms
 ## compiling
 (theres a pre compiled 3dsx and cia inside the output folder \Runners\3DS\output)
 
@@ -35,7 +42,7 @@ this process will be easier later, just needing you to click the yyp in data.win
 <br>
 
 1. download the repo and extract it to a location without spaces in the path. eg: D:\projects_and_stuff\GameMaker-Anywhere\
-2. using gamemaker 2024.14.2.213, open the data.win compiler project and run it 
+2. using gamemaker, open the data.win compiler project and run it 
 3. select the yyp of the test project
 4. after finishing, go to the test project folder and open the "3DS Data Exported" folder
 5. run the "build_sprites_t3x.bat"
