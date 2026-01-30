@@ -67,9 +67,9 @@
         "sprite":"Sprite3"
       },
       {
-        "StepCode":"\r\n\r\nif gamepad_button_check(4, gp_face1){\r\n\ty+=2;\t\r\n}\r\n\r\nif gamepad_button_check(4, gp_face4){\r\n\ty-=2;\t\r\n}\r\n\r\nif gamepad_button_check(4, gp_face2){\r\n\tx+=2;\t\r\n}\r\n\r\nif gamepad_button_check(4, gp_face3){\r\n\tx-=2;\t\r\n}\r\n\r\n\r\nif gamepad_button_check(4, gp_select){\r\n\tx = 300;\r\n}",
+        "StepCode":"if (gamepad_button_check(4, gp_face1)) {\r\n    y += 5;\r\n}\r\n\r\nif (gamepad_button_check(4, gp_face4)) {\r\n    y -= 5;\r\n}\r\n\r\nif (gamepad_button_check(4, gp_face2)) {\r\n    x += 5;\r\n}\r\n\r\nif gamepad_button_check(4, gp_face3) {\r\n    x -= 5;\r\n}\r\n\r\nif (gamepad_button_check_pressed(4, gp_select)) {\r\n    x = 300;\r\n\ty = 400;\r\n}\r\n\r\nif (gamepad_button_check_released(4, gp_select)) {\r\n    y = 300;\r\n}\r\n",
         "name":"obj_ralseiswag",
-        "CreateCode":"x = 0;\r\ny = 0;",
+        "CreateCode":"x = 0;\ny = 0;",
         "sprite":"what"
       }
     ]
@@ -127,6 +127,15 @@
                 "name":"inst_22EAA4C0",
                 "scaleX":1.0,
                 "x":1312.0,
+                "y":0.0,
+                "object":"obj_cat",
+                "rotation":0.0,
+                "scaleY":1.0
+              },
+              {
+                "name":"inst_18424B3B",
+                "scaleX":1.0,
+                "x":1216.0,
                 "y":0.0,
                 "object":"obj_cat",
                 "rotation":0.0,

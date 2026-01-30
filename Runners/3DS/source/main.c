@@ -27,18 +27,6 @@ const char* CurrentRoom = "";
 int  sprite_object_id[MAX_SPRITES];
 static bool sprite_is_object[MAX_SPRITES];
 
-/*
-static int FindSpriteIndexByObjectId(int id)
-{
-	for (size_t i = 0; i < SpriteCount; i++)
-	{
-		if (sprite_is_object[i] && sprite_object_id[i] == id)
-			return (int)i;
-	}
-	return -1;
-}
-*/
-
 #pragma region //Return values from the data.win
 //get the sprite via its t3s slot
 static int GetSpriteNumberByName(const cJSON* root, const char* sprite_name)

@@ -56,26 +56,26 @@ static int input_convertstring(const char* s, const char** out_end)
 	return -4;
 }
 
-static const char* skip_block(const char* c)
+static const char* skip_block(const char* cursor)
 {
 	int depth = 1;
-	while (*c && depth > 0)
+	while (*cursor && depth > 0)
 	{
-		if (*c == '{'){
+		if (*cursor == '{'){
 			depth++;
 		}
-		else if (*c == '}'){
+		else if (*cursor == '}'){
 			depth--;
 		}
 
-		c++;
+		cursor++;
 	}
 
-	return c;
+	return cursor;
 }
 
 //return next object
-static int runner_next_object_index(int* cursor, int defIndex)
+static int runner_next_object_index(int* cursor, int object_index)
 {
     for (int tries = 0; tries < (int)SpriteCount; tries++)
     {
@@ -85,7 +85,7 @@ static int runner_next_object_index(int* cursor, int defIndex)
         int object = *cursor;
         (*cursor)++;
 
-        if (runner_sprite_is_object(object) && sprite_object_id[object] == defIndex)
+        if (runner_sprite_is_object(object) && sprite_object_id[object] == object_index)
             return object;
     }
 
@@ -158,7 +158,7 @@ static bool if_gamepad_button_check_pressed(const char** p_cursor){
 	//gamepad check function
 	if (strncmp(cursor, "gamepad_button_check_pressed", 28) == 0)
 	{
-		cursor += 20;
+		cursor += 28;
 
 		while (*cursor && *cursor != '('){
 			cursor++;
@@ -214,7 +214,7 @@ static bool if_gamepad_button_check_released(const char** p_cursor){
 	//gamepad check function
 	if (strncmp(cursor, "gamepad_button_check_released", 29) == 0)
 	{
-		cursor += 20;
+		cursor += 29;
 
 		while (*cursor && *cursor != '('){
 			cursor++;
@@ -266,7 +266,7 @@ static bool if_gamepad_button_check_released(const char** p_cursor){
 static bool runner_apply_if_code(const char** p_cursor){
 	const char* cursor = *p_cursor;
 
-	//this is an if statement?
+	//check if this is a if statment
 	if (strncmp(cursor, "if", 2) == 0)
 	{
 		cursor += 2;
@@ -277,32 +277,36 @@ static bool runner_apply_if_code(const char** p_cursor){
 		if (*cursor == '(')
 		{
 			cursor++;
-
-			//skip empty space again!
-			skip_emptyspace(&cursor);	
-
-						
-			//gamepad_button_pressed
-			if (if_gamepad_button_check_pressed(&cursor))
-			{
-				*p_cursor = cursor;
-				return true;
-			}
-
-			//gamepad_button_released
-			if (if_gamepad_button_check_released(&cursor))
-			{
-				*p_cursor = cursor;
-				return true;
-			}
-
-			//gamepad_button_check (held)
-			if (if_gamepad_button_check(&cursor))
-			{
-				*p_cursor = cursor;
-				return true;
-			}
 		}
+		//skip empty space again!
+		skip_emptyspace(&cursor);	
+
+
+
+				
+		//the if code checks
+		//gamepad_button_pressed
+		if (if_gamepad_button_check_pressed(&cursor))
+		{
+			*p_cursor = cursor;
+			return true;
+		}
+
+		//gamepad_button_released
+		if (if_gamepad_button_check_released(&cursor))
+		{
+			*p_cursor = cursor;
+			return true;
+		}
+
+		//gamepad_button_check (held)
+		if (if_gamepad_button_check(&cursor))
+		{
+			*p_cursor = cursor;
+			return true;
+		}
+
+
 	}
 
 	return false;
@@ -426,38 +430,52 @@ static void runner_apply_xy_code(int object_index, const char* code)
 void RunGML_create(const char* code, int object_def_index)
 {
 	//Select next object instance
-    static bool did_create[MAX_SPRITES] = {0};
-    static int create_cursor = 0;
-    int instance_index = runner_next_object_index(&create_cursor, object_def_index);
+	static bool did_create[MAX_SPRITES] = {0};
+	static int create_cursor = 0;
 
-    if (instance_index < 0)
-        return;
+	for (int n = 0; n < (int)SpriteCount; n++)
+	{
+		int instance_index = runner_next_object_index(&create_cursor, object_def_index);
 
+		if (instance_index < 0)
+			return;
 
-	//check and set if the creates ran
-    if (did_create[instance_index])
-        return;
-    did_create[instance_index] = true;
+		//check and set if the creates ran
+		if (did_create[instance_index])
+			continue;
+		did_create[instance_index] = true;
 
-
-	//run the code
-    runner_apply_xy_code(instance_index, code);
+		//run the code
+		runner_apply_xy_code(instance_index, code);
+	}
 }
 
 void RunGML_step(const char* code, int object_def_index)
 {
 	//Select next object instance
-    static int step_cursor = 0;
-    int instance_index = runner_next_object_index(&step_cursor, object_def_index);
+	static int step_cursor = 0;
+	static bool ran_this_frame[MAX_SPRITES] = {0};
 
-    if (instance_index < 0)
-        return;
+	for (int n = 0; n < (int)SpriteCount; n++)
+	{
+		int instance_index = runner_next_object_index(&step_cursor, object_def_index);
+		if (instance_index < 0)
+			return;
+
+		if (ran_this_frame[instance_index])
+			continue;
+
+		ran_this_frame[instance_index] = true;
 
 
-	//run the code
-    runner_apply_xy_code(instance_index, code);
+		//run the code
+		runner_apply_xy_code(instance_index, code);
+	}
+
+	for (int i = 0; i < (int)SpriteCount; i++){
+		ran_this_frame[i] = false;
+	}
 }
-
 
 
 
@@ -466,7 +484,7 @@ void RunGML(){
 	const cJSON* objs = cJSON_GetObjectItemCaseSensitive(root, "Objects");
 	const cJSON* all  = cJSON_GetObjectItemCaseSensitive(objs, "all_objects");
 	const cJSON* object = NULL;
-	int defIndex = 0;
+	int object_index = 0;
 
 	cJSON_ArrayForEach(object, all)
 	{
@@ -474,12 +492,12 @@ void RunGML(){
 		const cJSON* code_step   = cJSON_GetObjectItemCaseSensitive(object, "StepCode");
 
 		if (code_create && cJSON_IsString(code_create) && code_create->valuestring && code_create->valuestring[0] != '\0')
-			RunGML_create(code_create->valuestring, defIndex);
+			RunGML_create(code_create->valuestring, object_index);
 
 		if (code_step && cJSON_IsString(code_step) && code_step->valuestring && code_step->valuestring[0] != '\0')
-			RunGML_step(code_step->valuestring, defIndex);
+			RunGML_step(code_step->valuestring, object_index);
 
-		defIndex++;
+		object_index++;
 	}
 }
 
