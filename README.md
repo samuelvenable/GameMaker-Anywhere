@@ -17,7 +17,8 @@ A heavy work in progress port of gamemaker to several consoles (3ds only current
 Feel free to contribute! (i really need the help...)
 
 ### Complete
-- Setting X and Y  
+- Setting X and Y
+- if statements
 - Addition and subtraction  
 
 ### Todo (sorted from least to most needed)
