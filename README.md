@@ -31,7 +31,7 @@ Feel free to contribute! (i really need the help...)
 - instance_create_depth and layer
 - scripts
 - object referencing
-- port to other platforms
+- port to other platforms (just need to replace 3ds apis)
 ## compiling
 (theres a pre compiled 3dsx and cia inside the output folder \Runners\3DS\output)
 
