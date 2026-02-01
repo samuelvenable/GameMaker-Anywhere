@@ -9,6 +9,8 @@
 #include <3ds.h>
 #include "gml_functions.h"
 #include "gml_runner.h"
+#include "gml_runner.h"
+#include "shortcut_functions.h"
 #include <stdbool.h>
 
 float cam_x = 0;
@@ -368,13 +370,11 @@ int main()
 	printf("room height=%.1f\n", GetCurrentRoomSize(data_json, "height"));
 
 	//check current platform
-	#ifdef __3DS__
+	if (is_running3DS())
 		printf("Running on 3DS!!!!\n");
-	#endif
 
-	#ifdef __WIIU__
+	if (is_runningWiiU())
 		printf("Running on Wii U!!!!!!\n");
-	#endif
 
 	//sily cat :D
 	//draw_sprite(0, spriteSheet, 50, 50);

@@ -14,9 +14,9 @@ CORRECT_MAKEFILE := $(abspath $(firstword $(MAKEFILE_LIST)))
 # APP_SHORTNAME sets the short name of the application
 # APP_AUTHOR sets the author of the application
 #-------------------------------------------------------------------------------
-#APP_NAME	:= Application Name
-#APP_SHORTNAME	:= App Name
-#APP_AUTHOR	:= Built with devkitPPC & wut
+APP_NAME       := GMS2 Runner
+APP_SHORTNAME  := GMS2
+APP_AUTHOR     := Ralcactus
 
 include $(DEVKITPRO)/wut/share/wut_rules
 
@@ -31,15 +31,15 @@ include $(DEVKITPRO)/wut/share/wut_rules
 # TV_SPLASH is the image displayed during bootup on the TV, leave blank to use default rule
 # DRC_SPLASH is the image displayed during bootup on the DRC, leave blank to use default rule
 #-------------------------------------------------------------------------------
-TARGET		:=	$(notdir $(CURDIR))
-BUILD		:=	build
-SOURCES		:=	source
-DATA		:=	data
-INCLUDES	:=	include
-CONTENT		:=
-ICON		:=
-TV_SPLASH	:=
-DRC_SPLASH	:=
+TARGET      := $(notdir $(CURDIR))
+BUILD       := build
+SOURCES     := source
+DATA        := data
+INCLUDES    := include
+CONTENT     := romfs
+ICON        := resources/icon.png
+TV_SPLASH   := resources/banner.png
+DRC_SPLASH  := resources/banner.png
 
 #-------------------------------------------------------------------------------
 # options for code generation
@@ -54,7 +54,7 @@ CXXFLAGS	:= $(CFLAGS)
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-g $(ARCH) $(RPXSPECS) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lwut
+LIBS := -lSDL2_image -lSDL2 -lwut -lm
 
 #-------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level
