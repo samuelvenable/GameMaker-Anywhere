@@ -30,12 +30,15 @@
   "isEcma":false,
   "LibraryEmitters":[],
   "MetaData":{
-    "IDEVersion":"2024.14.3.217",
+    "IDEVersion":"2024.14.2.213",
   },
   "name":"Gamemaker 3ds runner UI",
   "resources":[
+    {"id":{"name":"obj_bg_manager","path":"objects/obj_bg_manager/obj_bg_manager.yy",},},
     {"id":{"name":"obj_compiler","path":"objects/obj_compiler/obj_compiler.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
+    {"id":{"name":"scr_compile","path":"scripts/scr_compile/scr_compile.yy",},},
+    {"id":{"name":"spr_secretPT_bg","path":"sprites/spr_secretPT_bg/spr_secretPT_bg.yy",},},
   ],
   "resourceType":"GMProject",
   "resourceVersion":"2.0",

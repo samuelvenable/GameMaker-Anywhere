@@ -1,8 +1,8 @@
 {
   "GameMetadata":{
-    "titleId":"0123456789ABCDEF",
-    "publisher":"real publisher!!!!111",
-    "name":"undertale real?"
+    "titleId":"DE89E2390A8DAAAA",
+    "publisher":"me!",
+    "name":"garry!"
   },
   "FirstRoom":{
     "name":"Room1"
@@ -236,7 +236,7 @@
       {
         "CreateCode":"x = 0;\ny = 0;",
         "sprite":"what",
-        "StepCode":"if (gamepad_button_check(4, gp_face1)) {\n    y += 5;\n}\n\nif (gamepad_button_check(4, gp_face4)) {\n    y -= 5;\n}\n\nif (gamepad_button_check(4, gp_face2)) {\n    x += 5;\n}\n\nif gamepad_button_check(4, gp_face3) {\n    x -= 5;\n}\n\nif (gamepad_button_check_pressed(4, gp_select)) {\n    x = 300;\n\ty = 400;\n}\n\nif (gamepad_button_check_released(4, gp_select)) {\n    y = 300;\n}\n",
+        "StepCode":"if (gamepad_button_check(4, gp_face1)) {\r\n    y += 5;\r\n}\r\n\r\nif (gamepad_button_check(4, gp_face4)) {\r\n    y -= 5;\r\n}\r\n\r\nif (gamepad_button_check(4, gp_face2)) {\r\n    x += 5;\r\n}\r\n\r\nif gamepad_button_check(4, gp_face3) {\r\n    x -= 5;\r\n}\r\n\r\nif (gamepad_button_check_pressed(4, gp_select)) {\r\n    x = 300;\r\n\ty = 400;\r\n}\r\n\r\nif (gamepad_button_check_released(4, gp_select)) {\r\n    y = 300;\r\n}\r\n",
         "name":"obj_ralseiswag"
       }
     ]
