@@ -1,11 +1,14 @@
-draw_set_font(-1);
-
+draw_set_color(c_yellow);
+draw_text(10,30, "WIP! This only compiles the data.win\n" + 
+	"THIS DOES NOT COMPILE TO THE PLATFORMS CURRENTLY!\n" +
+	"you must place the data.win made by this into\nthe runner manually!\n" +
+	"(the export mode does nothing btw)")
 draw_set_halign(fa_center);
 draw_set_valign(fa_top);
-draw_set_color(c_yellow);
-draw_text(room_width/2, 20, "GameMaker Anywhere Compiler!!!");
+draw_sprite(spr_logo, 0, room_width/2, 20);
 draw_set_color(c_white);
 
+#region draw buttons
 var btn_sel_hover = point_in_rectangle(mouse_x, mouse_y, 
     global.btn_select_x, global.btn_select_y, 
     global.btn_select_x + global.btn_select_w, 
@@ -14,8 +17,8 @@ var btn_sel_hover = point_in_rectangle(mouse_x, mouse_y,
 
 
 draw_set_color(btn_sel_hover ? c_white : c_black);
-draw_roundrect(global.btn_select_x, global.btn_select_y, 
-               global.btn_select_x + global.btn_select_w, 
+draw_roundrect(global.btn_select_x, global.btn_select_y,
+               global.btn_select_x + global.btn_select_w,
                global.btn_select_y + global.btn_select_h, false);
 			   
 draw_set_color(btn_sel_hover ? c_black : c_white);
@@ -23,6 +26,7 @@ draw_roundrect(global.btn_select_x, global.btn_select_y,
                global.btn_select_x + global.btn_select_w, 
                global.btn_select_y + global.btn_select_h, true);
 			   
+
 draw_set_color(btn_sel_hover ? c_black : c_white);
 draw_set_halign(fa_center);
 draw_set_valign(fa_middle);
@@ -30,6 +34,7 @@ draw_text(global.btn_select_x + global.btn_select_w/2,
           global.btn_select_y + global.btn_select_h/2, 
           "Select Project File");
 
+#endregion
 
 
 if (btn_sel_hover && mouse_check_button_pressed(mb_left)) {
@@ -54,10 +59,11 @@ if (btn_sel_hover && mouse_check_button_pressed(mb_left)) {
 draw_set_halign(fa_left);
 draw_set_valign(fa_top);
 draw_set_color(c_ltgray);
+
 if (global.selected_yyp != "") {
-    draw_text(100, 150, "selected: " + filename_name(global.selected_yyp));
+    draw_text(610, 250, "selected: " + filename_name(global.selected_yyp));
 } else {
-    draw_text(100, 150, "No Project Selected");
+    draw_text(610, 250, "No Project Selected");
 }
 
 draw_set_halign(fa_left);
@@ -77,11 +83,11 @@ for (var i = 0; i < array_length(fields); i++) {
         field_y + global.field_height - 5);
     
     draw_set_color(c_white);
-    draw_text(100, field_y, field.label);
+    draw_text(100+350, field_y, field.label);
     
     if (variable_struct_exists(field, "hint")) {
         draw_set_color(c_gray);
-        draw_text(100, field_y + 20, field.hint);
+        draw_text(100+350, field_y + 20, field.hint);
     }
     
     var is_active = (global.current_field == field.field_id);
@@ -101,6 +107,49 @@ for (var i = 0; i < array_length(fields); i++) {
         keyboard_string = field.value;
     }
 }
+
+
+
+
+#region export modes
+draw_set_halign(fa_left);
+draw_set_valign(fa_top);
+draw_set_color(c_white);
+draw_text(20, 320, "Export Mode:");
+
+for (var i = 0; i < array_length(modes); i++)
+{
+    var _y = global.field_start_y + (array_length(fields) * global.field_spacing) + 30 + i * 26 - 300;
+
+    //click hitbox
+    var hover = point_in_rectangle(mouse_x, mouse_y, 20, _y, 40, _y + 18);
+    var selected = global.export_mode == modes[i].number_ver;
+
+    //outline
+    draw_set_color(c_white);
+	if (hover)
+		 draw_set_color(c_dkgray);
+		
+    draw_roundrect(20, _y, 20 + 18, _y + 18, false);
+
+    //turn green when selected
+    if (selected) {
+		draw_set_color(c_green);
+        draw_roundrect(20, _y, 38, _y + 18, false);
+    }
+
+    //os text
+    draw_set_color(c_white);
+    draw_text(48, _y - 1, modes[i].label);
+
+    //change the mode variable
+    if (hover && mouse_check_button_pressed(mb_left)) {
+        global.export_mode = modes[i].number_ver;
+    }
+}
+#endregion
+
+
 
 if (mouse_check_button_pressed(mb_left)) {
     var clicked_field = false;
@@ -152,6 +201,7 @@ draw_text(global.btn_export_x + global.btn_export_w/2,
     global.btn_export_y + global.btn_export_h/2,
     "Export");
 
+//pressed the compile button and all the fields are filled out
 if (can_export && btn_exp_hover && mouse_check_button_pressed(mb_left)) {
 	scr_compile();
 }
@@ -161,18 +211,18 @@ draw_set_valign(fa_top);
 draw_set_color(c_red);
 
 if (global.selected_yyp == "") {
-    draw_text(room_width/2, 510, "Please select a project file");
+    draw_text(room_width/2, 700, "Please select a project file");
 } else if (global.game_name == "") {
-    draw_text(room_width/2, 510, "Please enter a game name");
+    draw_text(room_width/2, 700, "Please enter a game name");
 } else if (global.title_id == "") {
-    draw_text(room_width/2, 510, "Please enter a Title ID");
+    draw_text(room_width/2, 700, "Please enter a Title ID");
 } else if (string_length(global.title_id) != 16) {
-    draw_text(room_width/2, 510, "ID must be 16 hex digits (current: " + string(string_length(global.title_id)) + ")");
+    draw_text(room_width/2, 700, "ID must be 16 hex digits (current: " + string(string_length(global.title_id)) + ")");
 } else if (global.publisher == "") {
-    draw_text(room_width/2, 510, "Please enter a publisher name");
+    draw_text(room_width/2, 700, "Please enter a publisher name");
 } else {
     draw_set_color(c_lime);
-    draw_text(room_width/2, 510, "Export Ready");
+    draw_text(room_width/2, 700, "Export Ready");
 }
 draw_set_halign(fa_left);
 draw_set_valign(fa_top);

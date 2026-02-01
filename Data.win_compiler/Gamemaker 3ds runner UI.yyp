@@ -38,6 +38,7 @@
     {"id":{"name":"obj_compiler","path":"objects/obj_compiler/obj_compiler.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
     {"id":{"name":"scr_compile","path":"scripts/scr_compile/scr_compile.yy",},},
+    {"id":{"name":"spr_logo","path":"sprites/spr_logo/spr_logo.yy",},},
     {"id":{"name":"spr_secretPT_bg","path":"sprites/spr_secretPT_bg/spr_secretPT_bg.yy",},},
   ],
   "resourceType":"GMProject",
