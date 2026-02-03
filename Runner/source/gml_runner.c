@@ -49,7 +49,7 @@ static int input_convertstring(const char* s, const char** out_end)
 		return gp_start; 
 	}
 
-	if (strncmp(s, "gp_select", 8) == 0){
+	if (strncmp(s, "gp_select", 9) == 0){
 		return gp_select; 
 	}
 
