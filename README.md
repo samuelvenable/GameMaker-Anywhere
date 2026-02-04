@@ -5,6 +5,7 @@
 ## Info
 <p align="left">
 A work in progress open source port of gamemaker to several consoles (3ds only currently) using devkitpro and C.
+https://discord.gg/cc2YA2pChU
 </p>
 
 <br>
