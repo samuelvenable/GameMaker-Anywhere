@@ -6,8 +6,8 @@
 #include "gml_runner.h"
 #include <stdlib.h>
 #include <stdbool.h>
+#include "main.h"
 static const cJSON* root = NULL;
-
 
 #pragma region //shortcut stuff
 //carry over the root from the main.c (probably better way i could've done this...)
@@ -479,7 +479,10 @@ static void runner_apply_roomgoto_code(int object_index, const char* code)
 		remove_all_chars(RealRoom, ';');
 		remove_all_chars(RealRoom, ')');
 
-		printf("cursor=%s\n", cursor);
+		printf("cursor=%s\n", RealRoom);
+
+		CurrentRoom = RealRoom;
+		InitCurrentRoom(data_json);
 
 		if (*cursor == ')')
 			cursor++;
