@@ -16,23 +16,13 @@ void GML_SetRoot(const cJSON* garrys_in_the_room_tonight)
 	root = garrys_in_the_room_tonight;
 }
 
-void remove_all_chars(char* str, char c) {
-    char *pr = str, *pw = str;
+void remove_all_chars(char* string, char character) {
+    char *pr = string, *pw = string;
     while (*pr) {
         *pw = *pr++;
-        pw += (*pw != c);
+        pw += (*pw != character);
     }
     *pw = '\0';
-}
-
-static inline void skip_emptyspace(const char** cursor_butgarryateit)
-{
-	//i love stupid ass variable names :garry:
-	const char* cursor_butgarryateit_thesequal = *cursor_butgarryateit;
-	while (*cursor_butgarryateit_thesequal == ' ' || *cursor_butgarryateit_thesequal == '\t' || *cursor_butgarryateit_thesequal == '\r' || *cursor_butgarryateit_thesequal == '\n')
-		cursor_butgarryateit_thesequal++;
-	
-	*cursor_butgarryateit = cursor_butgarryateit_thesequal;
 }
 
 static int input_convertstring(const char* s, const char** out_end)
@@ -65,24 +55,6 @@ static int input_convertstring(const char* s, const char** out_end)
 	return -4;
 }
 
-static const char* skip_block(const char* cursor)
-{
-	int depth = 1;
-	while (*cursor && depth > 0)
-	{
-		if (*cursor == '{'){
-			depth++;
-		}
-		else if (*cursor == '}'){
-			depth--;
-		}
-
-		cursor++;
-	}
-
-	return cursor;
-}
-
 //return next object
 static int runner_next_object_index(int* cursor, int object_index)
 {
@@ -98,341 +70,109 @@ static int runner_next_object_index(int* cursor, int object_index)
             return object;
     }
 
-    return -1; //make compiler happy
-}
-#pragma endregion
-
-#pragma region //if statments
-
-//check if button is held
-static bool if_gamepad_button_check(const char** p_cursor){
-	const char* cursor = *p_cursor;
-	
-	//gamepad check function
-	if (strncmp(cursor, "gamepad_button_check", 20) == 0)
-	{
-		cursor += 20;
-
-		while (*cursor && *cursor != '('){
-			cursor++;
-		}
-
-		if (*cursor == '(')
-			cursor++;
-
-		//skip the device text
-		strtol(cursor, (char**)&cursor, 10);
-
-		while (*cursor && *cursor != ','){
-			cursor++;
-		}
-
-		if (*cursor == ',')
-			cursor++;
-
-		//skip empty space again again!
-		skip_emptyspace(&cursor);
-
-		int button = input_convertstring(cursor, &cursor);
-
-		while (*cursor && *cursor != ')'){
-			cursor++;
-		}
-
-		if (*cursor == ')')
-			cursor++;
-
-		while (*cursor && *cursor != '{'){
-			cursor++;
-		}
-
-		if (*cursor == '{') 
-			cursor++;
-
-		if (!gamepad_button_check(button))
-			cursor = skip_block(cursor);
-
-		*p_cursor = cursor;
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-
-//check if button is pressed
-static bool if_gamepad_button_check_pressed(const char** p_cursor){
-	const char* cursor = *p_cursor;
-	
-	//gamepad check function
-	if (strncmp(cursor, "gamepad_button_check_pressed", 28) == 0)
-	{
-		cursor += 28;
-
-		while (*cursor && *cursor != '('){
-			cursor++;
-		}
-
-		if (*cursor == '(')
-			cursor++;
-
-		//skip the device text
-		strtol(cursor, (char**)&cursor, 10);
-
-		while (*cursor && *cursor != ','){
-			cursor++;
-		}
-
-		if (*cursor == ',')
-			cursor++;
-
-		//skip empty space again again!
-		skip_emptyspace(&cursor);
-
-		int button = input_convertstring(cursor, &cursor);
-
-		while (*cursor && *cursor != ')'){
-			cursor++;
-		}
-
-		if (*cursor == ')')
-			cursor++;
-
-		while (*cursor && *cursor != '{'){
-			cursor++;
-		}
-
-		if (*cursor == '{') 
-			cursor++;
-
-		if (!gamepad_button_check_pressed(button))
-			cursor = skip_block(cursor);
-
-		*p_cursor = cursor;
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-
-//check if button is released
-static bool if_gamepad_button_check_released(const char** p_cursor){
-	const char* cursor = *p_cursor;
-
-	//gamepad check function
-	if (strncmp(cursor, "gamepad_button_check_released", 29) == 0)
-	{
-		cursor += 29;
-
-		while (*cursor && *cursor != '('){
-			cursor++;
-		}
-
-		if (*cursor == '(')
-			cursor++;
-
-		//skip the device text
-		strtol(cursor, (char**)&cursor, 10);
-
-		while (*cursor && *cursor != ','){
-			cursor++;
-		}
-
-		if (*cursor == ',')
-			cursor++;
-
-		//skip empty space again again!
-		skip_emptyspace(&cursor);
-
-		int button = input_convertstring(cursor, &cursor);
-
-		while (*cursor && *cursor != ')'){
-			cursor++;
-		}
-
-		if (*cursor == ')')
-			cursor++;
-
-		while (*cursor && *cursor != '{'){
-			cursor++;
-		}
-
-		if (*cursor == '{') 
-			cursor++;
-
-		if (!gamepad_button_check_released(button))
-			cursor = skip_block(cursor);
-
-		*p_cursor = cursor;
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-
-static bool runner_apply_if_code(const char** p_cursor){
-	const char* cursor = *p_cursor;
-
-	//check if this is a if statment
-	if (strncmp(cursor, "if", 2) == 0)
-	{
-		cursor += 2;
-
-		//skip empty space
-		skip_emptyspace(&cursor);
-
-		if (*cursor == '(')
-		{
-			cursor++;
-		}
-		//skip empty space again!
-		skip_emptyspace(&cursor);	
-
-
-
-				
-		//the if code checks
-		//gamepad_button_pressed
-		if (if_gamepad_button_check_pressed(&cursor))
-		{
-			*p_cursor = cursor;
-			return true;
-		}
-
-		//gamepad_button_released
-		if (if_gamepad_button_check_released(&cursor))
-		{
-			*p_cursor = cursor;
-			return true;
-		}
-
-		//gamepad_button_check (held)
-		if (if_gamepad_button_check(&cursor))
-		{
-			*p_cursor = cursor;
-			return true;
-		}
-
-
-	}
-
-	return false;
+    return -1;
 }
 #pragma endregion
 
 #pragma region //applying code
+/*Notes!
+- The cursor progresses 1 character at a time
+- the fake cursor is used to check lines ahead of the current one
+- remember to set the normal cursor to the fake cursor after fake cursor is done!
+*/
+
+/*TODO
+	In runner_interpret_xy add decimal support
+*/
+
 //interpret x and y of the objects
 static void runner_interpret_xy(int object_index, const char* code)
 {
-	float current_x = sprites[object_index].spr.params.pos.x;
-	float current_y = sprites[object_index].spr.params.pos.y;
-	const char* cursor = code;
+	float object_x = sprites[object_index].spr.params.pos.x;
+	float object_y = sprites[object_index].spr.params.pos.y;
+    const char* cursor = code;
 
-	while (cursor && *cursor)
-	{
-		//skip empty space
-		skip_emptyspace(&cursor);
+    while (*cursor != '\0')
+    {
+        char character = *cursor;
+		const char* fakecusor = cursor;
+        //printf("current char: %c\n", character);
 
-		if (*cursor == '{' || *cursor == '}')
-		{
-			cursor++;
-			continue;
-		}
+		//is this a x statment?
+		if (character == 'x' || character == 'y'){
+			//save if we are changing the x or y
+			char postype = character;
 
-		if (runner_apply_if_code(&cursor))
-			continue;
+			//the next character
+			fakecusor++;
 
-
-		//check if this is a x or y statement
-		char axis = *cursor;
-		if (axis != 'x' && axis != 'y')
-		{
-			while (*cursor && *cursor != ';')
-				cursor++;
-			
-			if (*cursor == ';')
-				cursor++;
-
-			continue;
-		}
-		cursor++;
-
-		//skip empty space
-		skip_emptyspace(&cursor);
+			if (*fakecusor == ' ')
+				fakecusor++;
 
 
-		//check if doing addition, subtraction, set to, ect
-		bool to_add = false;
-		bool to_subtract = false;
-		bool to_multi = false;
-		
-		if (*cursor == '+')
-		{
-			cursor++;
-			to_add = true;
-			cursor++;
-		}
-		else if (*cursor == '-')
-		{
-			cursor++;
-			to_subtract = true;
-			cursor++;
-		}		
-		else if (*cursor == '*')
-		{
-			cursor++;
-			to_multi = true;
-			cursor++;
-		}
-		else if (*cursor == '=')
-		{
-			cursor++;
-		}
+			//is this a proper add statment
+			if (*fakecusor == '-' || *fakecusor == '+' || *fakecusor == '*' || *fakecusor == '='){
+				//store the operation
+				const char operationtype = *fakecusor;
+				fakecusor++;
 
-		//parse number
-		char* endptr = NULL;
-		float value = (float)strtod(cursor, &endptr);
+				while (*fakecusor == ' ')
+					fakecusor++;
 
-		if (endptr != cursor)
-		{
-			if (axis == 'x'){
-				if (to_add)
-					current_x += value;
-				else if (to_subtract)
-					current_x -= value;
-				else if (to_multi)
-					current_x *= value;
-				else
-					current_x = value;
+				if (*fakecusor == '=')
+					fakecusor++;
+
+				while (*fakecusor == ' ')
+					fakecusor++;
+
+				int thenumber = 0;
+				while (*fakecusor == '0' || *fakecusor == '1' || *fakecusor == '2' || *fakecusor == '3' || *fakecusor == '4' || *fakecusor == '5' || *fakecusor == '6' || *fakecusor == '7' || *fakecusor == '8' || *fakecusor == '9'){
+					thenumber = thenumber * 10 + (*fakecusor - '0');
+					fakecusor++;
+				}
+
+
+				//add value
+				if (operationtype == '+'){
+					if (postype == 'x')
+						object_x += thenumber;
+					else
+						object_y += thenumber;
+				}
+
+				//minus value
+				if (operationtype == '-'){
+					if (postype == 'x')
+						object_x -= thenumber;
+					else
+						object_y -= thenumber;
+				}
+
+				//multiply value
+				if (operationtype == '*'){
+					if (postype == 'x')
+						object_x *= thenumber;
+					else
+						object_y *= thenumber;
+				}
+
+				//set value
+				if (operationtype == '='){
+					if (postype == 'x')
+						object_x = thenumber;
+					else
+						object_y = thenumber;
+				}
 			}
-			
-			if (axis == 'y'){
-				if (to_add)
-					current_y += value;
-				else if (to_subtract)
-					current_y -= value;
-				else if (to_multi)
-					current_y *= value;
-				else
-					current_y = value;
-			}
-			cursor = endptr;
 		}
 
-
-		//continue if at the end of a line
-		if (*cursor == ';')
+		C2D_SpriteSetPos(&sprites[object_index].spr, object_x, object_y);
+		if (fakecusor == cursor)
 			cursor++;
+		else
+			cursor = fakecusor;
 
-		while (*cursor == '\n' || *cursor == '\r')
-			cursor++;
 	}
-
-	
-
-	C2D_SpriteSetPos(&sprites[object_index].spr, current_x, current_y);
 }
 
 #pragma endregion
