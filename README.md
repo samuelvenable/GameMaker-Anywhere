@@ -9,7 +9,7 @@ https://discord.gg/cc2YA2pChU
 </p>
 
 <br>
-
+s
 <p align="center">
   <img src="Github assets/example.gif" alt="The example gif" width="600" />
 </p>
@@ -18,23 +18,19 @@ https://discord.gg/cc2YA2pChU
 Feel free to contribute! (i really need the help...)
 
 ### Complete
-- Setting X and Y
-- if statements
-- Addition and subtraction
+- Setting, adding, subtracting, and multiplying X and Y on objects
 - Room width and height
 - room background colors
 - Object and Asset drawing
 
 ### Todo (sorted from least to most needed)
-- "&&" and "||"
 - custom variable stuff
-- rooms (should be pretty easy)
-- instance_create_depth and layer
-- scripts
-- object referencing
-- port to other platforms (just need to replace 3ds apis)
+- port to other platforms
+- rooms (should be pretty easy, it's setup for it)
+- and a bunch more...
+
 ## compiling
-(theres a pre compiled 3dsx and cia inside the output folder \Runners\3DS\output)
+(theres a pre compiled 3dsx and cia inside the output folder \Runners\3DS\output!!!!!)
 
 compiling is currently only recommended with the test project, anything else is almost guaranteed not to work (for now)
 this assumes you have devkitpro and citro2d installed
