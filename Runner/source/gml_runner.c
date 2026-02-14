@@ -136,12 +136,56 @@ static void runner_interpret_xy(int object_index, const char* code)
 	}
 }
 
+//interpret x and y of the objects
+static void runner_interpret_if(int object_index, const char* code)
+{
+	float object_x = sprites[object_index].spr.params.pos.x;
+	float object_y = sprites[object_index].spr.params.pos.y;
+    const char* cursor = code;
+
+    while (*cursor != '\0')
+    {
+        char character = *cursor;
+		const char* fakecusor = cursor;
+
+
+		//is this a if statment?
+		if (character == 'i'){
+			fakecusor++;
+			
+			//is this a if statment pt2
+			if (*fakecusor == 'f')
+				fakecusor++;
+			else{
+				cursor+=2;
+				continue;
+			}
+
+			
+			if (*fakecusor == ' ')
+				fakecusor++;
+			if (*fakecusor == '(')
+				fakecusor++;
+
+			printf("Inside If:       %c\n", *fakecusor);
+
+		}
+
+		if (fakecusor == cursor)
+			cursor++;
+		else
+			cursor = fakecusor;
+
+	}
+}
+
 #pragma endregion
 
 #pragma region //passing on the gml code to the interpreters
 
 void GML_interpret(const char* code, int object_def_index){
 	runner_interpret_xy(object_def_index, code);
+	runner_interpret_if(object_def_index, code);
 }
 
 //runs the create code (on object creation)
