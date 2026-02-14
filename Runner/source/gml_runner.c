@@ -126,14 +126,13 @@ static void runner_interpret_xy(int object_index, const char* code)
 				}
 			}
 		}
-
-		C2D_SpriteSetPos(&sprites[object_index].spr, object_x, object_y);
 		if (fakecusor == cursor)
 			cursor++;
 		else
 			cursor = fakecusor;
 
 	}
+	C2D_SpriteSetPos(&sprites[object_index].spr, object_x, object_y);
 }
 
 //interpret x and y of the objects
