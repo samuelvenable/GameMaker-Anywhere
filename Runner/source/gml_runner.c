@@ -43,7 +43,7 @@ static int runner_next_object_index(int* cursor, int object_index)
 */
 
 /*TODO
-	In runner_interpret_xy add decimal support
+	In runner_interpret_xy add decimal supportfi
 */
 
 //interpret x and y of the objects
@@ -138,8 +138,6 @@ static void runner_interpret_xy(int object_index, const char* code)
 //interpret x and y of the objects
 static void runner_interpret_if(int object_index, const char* code)
 {
-	float object_x = sprites[object_index].spr.params.pos.x;
-	float object_y = sprites[object_index].spr.params.pos.y;
     const char* cursor = code;
 
     while (*cursor != '\0')
