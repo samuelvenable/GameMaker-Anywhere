@@ -138,7 +138,7 @@ static void runner_interpret_xy(int object_index, const char* code)
 
 #pragma endregion
 
-#pragma region //passing on the gml code to the in interpreters
+#pragma region //passing on the gml code to the interpreters
 
 void GML_interpret(const char* code, int object_def_index){
 	runner_interpret_xy(object_def_index, code);
