@@ -35,6 +35,8 @@ Feel free to contribute! (i really need the help...)
 compiling is currently only recommended with the test project, anything else is almost guaranteed not to work (for now)
 this assumes you have devkitpro and citro2d installed
 this process will be easier later, just needing you to click the yyp in data.win compiler project
+once nds support is added, you may need another toolchain like BlocksDS and Wonderful Toolchain. 
+DevkitARM has some strange issues when compiling certain nds libraries so its much easier to use BlocksDS
 
 <br>
 
@@ -55,3 +57,4 @@ Meet the team!
 - Ralcactus (coder and creator)
 - FoxFore (coder)
 - Loaf (Logo designer)
+- Finlay (coder)
