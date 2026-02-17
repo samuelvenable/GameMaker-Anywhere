@@ -49,3 +49,9 @@ this process will be easier later, just needing you to click the yyp in data.win
 9. open powershell in the root directory of the runner and run make 3dsx
 10. if everythings gone right, you should get a 3dsx in the output folder (ignore the rest of the files)
 11. (extra) you can compile a cia if you have banner tool and makerom setup, just run make cia instead of make 3dsx
+
+## Credits
+Meet the team!
+- Ralcactus (coder and creator)
+- FoxFore (coder)
+- Loaf (Logo designer)
