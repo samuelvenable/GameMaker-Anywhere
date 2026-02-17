@@ -89,11 +89,12 @@ static void quick_printfakecursor(const char* fakecursor){
 
 #pragma region //if interpreting
 
-//check if we are holding the button a if wants
+#pragma region //inputs
+
+#pragma region //gamepad_button_check
 static bool runner_interpret_input_held(const char* padindex, const char* button){
 	if (gamepad_button_check(input_convertstring(button))){
 		printf("Holding button:       %s\n", button);
-
 		return true;
 	}
 	return false;
@@ -125,13 +126,95 @@ static bool runner_gamepad_button_check(const char* cursor){
 
 	return runner_interpret_input_held(padindex, button);
 }
+#pragma endregion
+
+#pragma region //gamepad_button_check_pressed
+static bool runner_interpret_input_pressed(const char* padindex, const char* button){
+	if (gamepad_button_check_pressed(input_convertstring(button))){
+		printf("Pressing button:       %s\n", button);
+		return true;
+	}
+	return false;
+}
+
+static bool runner_gamepad_button_check_pressed(const char* cursor){
+	char padindex[256];
+	char button[256];
+
+	int pad_i = 0;
+	while (*cursor != ',' && *cursor != '\0'){
+		//add each character to the buffer
+		padindex[pad_i++] = *cursor;
+		cursor++;
+	}
+	padindex[pad_i] = '\0';
+
+	cursor++;
+	while (*cursor == ' ')
+		cursor++;
+
+	int button_i = 0;
+	while (*cursor != ')' && *cursor != '\0'){
+		//add each character to the buffer
+		button[button_i++] = *cursor;
+		cursor++;
+	}
+	button[button_i] = '\0';
+
+	return runner_interpret_input_pressed(padindex, button);
+}
+#pragma endregion
+
+#pragma region //gamepad_button_check_released
+static bool runner_interpret_input_released(const char* padindex, const char* button){
+	if (gamepad_button_check_released(input_convertstring(button))){
+		printf("Released button:       %s\n", button);
+		return true;
+	}
+	return false;
+}
+
+static bool runner_gamepad_button_check_released(const char* cursor){
+	char padindex[256];
+	char button[256];
+
+	int pad_i = 0;
+	while (*cursor != ',' && *cursor != '\0'){
+		//add each character to the buffer
+		padindex[pad_i++] = *cursor;
+		cursor++;
+	}
+	padindex[pad_i] = '\0';
+
+	cursor++;
+	while (*cursor == ' ')
+		cursor++;
+
+	int button_i = 0;
+	while (*cursor != ')' && *cursor != '\0'){
+		//add each character to the buffer
+		button[button_i++] = *cursor;
+		cursor++;
+	}
+	button[button_i] = '\0';
+
+	return runner_interpret_input_released(padindex, button);
+}
+#pragma endregion
+
+#pragma endregion
 
 static bool runner_if_middleman(const char* function, const char* args)
 {
     if (strcmp(function, "gamepad_button_check") == 0)
-    {
         return runner_gamepad_button_check(args);
-    }
+
+    if (strcmp(function, "gamepad_button_check_pressed") == 0)
+        return runner_gamepad_button_check_pressed(args);
+
+    if (strcmp(function, "gamepad_button_check_released") == 0)
+        return runner_gamepad_button_check_released(args);
+
 
     return false;
 }
@@ -326,7 +409,6 @@ static void runner_interpret_xy(int object_index, const char* code)
 
 void GML_interpret(const char* code, int object_def_index){
 	runner_interpret_xy(object_def_index, code);
-	//runner_interpret_if(object_def_index, code);
 }
 
 //runs the create code (on object creation)
