@@ -1,5 +1,5 @@
-APP_TITLE = GMS2 3DS (temp)
-APP_DESCRIPTION = Play GMS2 games on your 3ds! (temp)
+APP_TITLE = GameMaker Anywhere Project
+APP_DESCRIPTION = Play GMS2 games on your 3ds!
 APP_AUTHOR = Ralcactus
 APP_PRODUCT_CODE = Your-Code
 APP_UNIQUE_ID = 0x38192
