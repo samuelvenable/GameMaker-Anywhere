@@ -22,6 +22,7 @@ Feel free to contribute! (i really need the help...)
 - Room width and height
 - Room background colors
 - Object and Asset drawing
+- Room changing
 
 ### Todo (sorted from most to least needed)
 - Custom variables
