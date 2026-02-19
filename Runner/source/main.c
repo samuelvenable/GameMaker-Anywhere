@@ -312,25 +312,21 @@ static void CreateCurrentRoomObjects(const char* json_text)
 	cJSON_Delete(root);
 }
 
-#pragma endregion
-
-//Clear objects and assets
-static void Runner_ClearRoomState(void)
+//Init the current room (create assets, objects, ect. also resets the previous room)
+void InitCurrentRoom(const char* json_text)
 {
+	//reset room stuff
     SpriteCount = 0;
-
     memset(sprites, 0, sizeof(sprites));
     memset(sprite_object_id, 0, sizeof(sprite_object_id));
     memset(sprite_is_object, 0, sizeof(sprite_is_object));
-}
 
-//Init the current room (create assets, objects, run creation code, ect)
-void InitCurrentRoom(const char* json_text)
-{
-	Runner_ClearRoomState();
 	CreateCurrentRoomAssets(json_text);
 	CreateCurrentRoomObjects(json_text);
 }
+
+#pragma endregion
+
 
 
 
@@ -397,17 +393,12 @@ int main()
 	if (is_running3DS())
 		printf("Running on 3DS!!!!\n");
 
-	if (is_runningWiiU())
-		printf("Running on Wii U!!!!!!\n");
-
-	//sily cat :D
-	//draw_sprite(0, spriteSheet, 50, 50);
 	#pragma endregion
 
 
 
 
-	//"Step" event
+	//run every frame
 	while (true)
 	{
 		//scan for inputs
@@ -431,6 +422,7 @@ int main()
 
 
 	#pragma region //end app
+	
 	//3ds
 	if (is_running3DS()){
 		C2D_SpriteSheetFree(spriteSheet);

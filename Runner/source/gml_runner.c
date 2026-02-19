@@ -9,6 +9,11 @@
 #include "main.h"
 static const cJSON* root = NULL;
 
+
+static void quick_printfakecursor(const char* fakecursor){
+	printf("fakecursor at:       %c\n", *fakecursor);
+}
+
 #pragma region //shortcut stuff
 //carry over the root from the main.c (probably better way i could've done this...)
 void GML_SetRoot(const cJSON* garrys_in_the_room_tonight)
@@ -33,7 +38,6 @@ static int runner_next_object_index(int* cursor, int object_index)
 
     return -1;
 }
-#pragma endregion
 
 //convert a string of an input to a macro 
 static int input_convertstring(const char* string)
@@ -72,9 +76,8 @@ static int input_convertstring(const char* string)
 	return -4;
 }
 
-static void quick_printfakecursor(const char* fakecursor){
-	printf("fakecursor at:       %c\n", *fakecursor);
-}
+#pragma endregion
+
 
 #pragma region //applying code
 /*Notes!
