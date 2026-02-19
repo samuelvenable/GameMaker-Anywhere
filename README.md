@@ -20,14 +20,13 @@ Feel free to contribute! (i really need the help...)
 ### Complete
 - Setting, adding, subtracting, and multiplying X and Y on objects
 - Room width and height
-- room background colors
+- Room background colors
 - Object and Asset drawing
 
-### Todo (sorted from least to most needed)
-- custom variable stuff
-- port to other platforms
-- rooms (should be pretty easy, it's setup for it)
-- and a bunch more...
+### Todo (sorted from most to least needed)
+- Custom variables
+- Port to other platforms
+- And a bunch more...
 
 ## compiling
 (theres a pre compiled 3dsx and cia inside the output folder \Runners\3DS\output!!!!!)
