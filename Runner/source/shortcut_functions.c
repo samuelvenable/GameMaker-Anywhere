@@ -10,6 +10,15 @@ bool is_running3DS()
     #endif
 }
 
+bool is_runningRAY()
+{
+    #ifdef __RAYLIB__
+        return true;
+    #else
+        return false;
+    #endif
+}
+
 bool is_runningWiiU()
 {
     #ifdef __WIIU__

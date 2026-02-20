@@ -499,7 +499,13 @@ static void runner_interpret_xy(int object_index, const char* code)
 			cursor = fakecursor;
 
 	}
-	C2D_SpriteSetPos(&sprites[object_index].spr, object_x, object_y);
+
+	#ifdef __3DS__
+		C2D_SpriteSetPos(&sprites[object_index].spr, object_x, object_y);
+	#elif __RAYLIB__
+		sprites[object_index].texture.x = object_x;
+		sprites[object_index].texture.y = object_y;
+	#endif
 }
 #pragma endregion
 

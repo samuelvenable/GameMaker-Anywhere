@@ -21,11 +21,19 @@ float cam_x = 0;
 float cam_y = 0;
 float cam_w = 400;
 float cam_h = 240;
-u32 g_keysDown = 0;
-u32 g_keysHeld = 0;
-u32 g_keysUp = 0;
 
-C2D_SpriteSheet spriteSheet;
+#ifdef __DKPRO__
+	u32 g_keysDown = 0;
+	u32 g_keysHeld = 0;
+	u32 g_keysUp = 0;
+#endif
+
+#ifdef __3DS__
+	C2D_SpriteSheet spriteSheet;
+#elif __RAYLIB__
+	Texture2D spriteSheet;
+#endif
+
 Sprite sprites[MAX_SPRITES];
 size_t SpriteCount = 0;
 const char* CurrentRoom = "";
@@ -69,60 +77,6 @@ static cJSON* GetFirstRoomName(const char* json_text)
 #pragma endregion
 
 #pragma region //Get room info (bg, width, height, ect)
-//return the current rooms background colour
-u32 GetCurrentRoomBgColor_3DS(const char* json_text, const char* room_name)
-{
-
-	u32 out = C2D_Color32f(255.0f, 255.0f, 255.0f, 1.0f);
-
-	cJSON* root = cJSON_Parse(json_text);
-	cJSON* rooms = cJSON_GetObjectItem(root, "Rooms");
-	cJSON* list = cJSON_GetObjectItem(rooms, "all_rooms");
-
-	cJSON* room = NULL;
-
-	if (list) 
-		room = list->child;
-
-	for (; room; room = room->next)
-	{
-		cJSON* roomname = cJSON_GetObjectItem(room, "name");
-
-		if (strcmp(roomname->valuestring, room_name) != 0) 
-			continue;
-
-		cJSON* layers = cJSON_GetObjectItem(room, "layers");
-
-		cJSON* layer = NULL;
-		if (layers)
-			layer = layers->child;
-
-		for (; layer; layer = layer->next)
-		{
-			//check if this is a background layer
-			cJSON* layertype = cJSON_GetObjectItem(layer, "type");
-			if (strcmp(layertype->valuestring, "GMRBackgroundLayer") != 0)
-				continue;
-
-			cJSON* bg = cJSON_GetObjectItem(layer, "background");
-			cJSON* color  = cJSON_GetObjectItem(bg, "colour");
-
-			if (color && (color->type & cJSON_Number))
-			{
-				u32 gm = (u32)color->valuedouble;
-				out = C2D_Color32((gm) & 0xFF, (gm >>  8) & 0xFF, (gm >> 16) & 0xFF, (gm >> 24) & 0xFF);
-			}
-
-			cJSON_Delete(root);
-			return out;
-		}
-		
-		break;
-	}
-
-	cJSON_Delete(root);
-	return out;
-}
 
 //return the current rooms size
 static float GetCurrentRoomSize(const char* json_text, const char* mode)
@@ -199,7 +153,7 @@ static void CreateCurrentRoomAssets(const char* json_text)
 				float float_rot = (float)rot->valuedouble * (float)M_PI / -180;
 
 				//draw the sprite
-				scr_drawroom_assets_3DS(SpriteCount, spriteSheet, float_x, float_y, float_scalex, float_scaley, float_rot, root, spr);
+				scr_drawroom_assets(SpriteCount, spriteSheet, float_x, float_y, float_scalex, float_scaley, float_rot, root, spr);
 
 				//set these to not have an object id
 				sprite_is_object[SpriteCount] = false;
@@ -293,11 +247,21 @@ static void CreateCurrentRoomObjects(const char* json_text)
 					float float_scaley = (float)scale_y->valuedouble;
 					float float_rot = (float)rot->valuedouble * (float)M_PI / -180;
 
-					Sprite* sp = &sprites[SpriteCount];
-					C2D_SpriteFromSheet(&sp->spr, spriteSheet, GetSpriteNumberByName(root, spriteName));
-					C2D_SpriteSetPos(&sp->spr, float_x, float_y);
-					C2D_SpriteSetScale(&sp->spr, float_scalex, float_scaley);
-					C2D_SpriteSetRotation(&sp->spr, float_rot);
+					#ifdef __3DS__
+						Sprite* sp = &sprites[SpriteCount];
+						C2D_SpriteFromSheet(&sp->spr, spriteSheet, GetSpriteNumberByName(root, spriteName));
+						C2D_SpriteSetPos(&sp->spr, float_x, float_y);
+						C2D_SpriteSetScale(&sp->spr, float_scalex, float_scaley);
+						C2D_SpriteSetRotation(&sp->spr, float_rot);
+					#elif __RAYLIB__
+						Texture2D* tex = &sprites[SpriteCount].texture;
+						tex->id = GetSpriteNumberByName(root, spriteName);
+						tex->x = float_x;
+						tex->y = float_y;
+						tex->width = 0; //will be set in the drawing function
+						tex->height = 0; //will be set in the drawing function
+						//raylib doesn't support rotation or scale in the texture struct, so these will be set in the drawing function as well
+					#endif
 
 					//mark as an object and give an id
 					sprite_is_object[SpriteCount] = true;
@@ -312,21 +276,25 @@ static void CreateCurrentRoomObjects(const char* json_text)
 	cJSON_Delete(root);
 }
 
-//Init the current room (create assets, objects, ect. also resets the previous room)
-void InitCurrentRoom(const char* json_text)
+#pragma endregion
+
+//Clear objects and assets
+static void Runner_ClearRoomState(void)
 {
-	//reset room stuff
     SpriteCount = 0;
+
     memset(sprites, 0, sizeof(sprites));
     memset(sprite_object_id, 0, sizeof(sprite_object_id));
     memset(sprite_is_object, 0, sizeof(sprite_is_object));
+}
 
+//Init the current room (create assets, objects, run creation code, ect)
+void InitCurrentRoom(const char* json_text)
+{
+	Runner_ClearRoomState();
 	CreateCurrentRoomAssets(json_text);
 	CreateCurrentRoomObjects(json_text);
 }
-
-#pragma endregion
-
 
 
 
@@ -335,9 +303,13 @@ int main()
 	#pragma region //init stuff
 	// Init libs
 	//3ds
-	C3D_RenderTarget* top = NULL;
+	#ifdef __3DS__
+		C3D_RenderTarget* top = NULL;
+	#endif
 
-	if (is_running3DS()){
+	bool progCond = true;
+
+	#ifdef __3DS__
 		gfxInitDefault();
 		romfsInit();
 		C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
@@ -359,7 +331,20 @@ int main()
 		top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
 		// Load sprite sheet
 		spriteSheet = C2D_SpriteSheetLoad("romfs:/gfx/sprites.t3x");
-	}
+	#elif __RAYLIB__
+		// Load sprite sheet
+		spriteSheet = LoadTexture("assets/sprites.png");
+
+		//load the data.win
+		FILE* datawin = fopen("assets/data.win", "rb");
+		fseek(datawin, 0, SEEK_END);
+		long size = ftell(datawin);
+		fseek(datawin, 0, SEEK_SET);
+		data_json = (char*)malloc((size_t)size + 1);
+		fread(data_json, 1, (size_t)size, datawin);
+		data_json[size] = '\0';
+		fclose(datawin);
+	#endif
 
 
 	printf("\x1b[45m");
@@ -393,20 +378,44 @@ int main()
 	if (is_running3DS())
 		printf("Running on 3DS!!!!\n");
 
+	if (is_runningWiiU())
+		printf("Running on Wii U!!!!!!\n");
+
+	if (is_runningRAY())
+		printf("Running on Raylib!!!!!!\n");
+
+	//sily cat :D
+	//draw_sprite(0, spriteSheet, 50, 50);
 	#pragma endregion
 
+	#ifdef __RAYLIB__
+		InitWindow(GetCurrentRoomSize(data_json, "width"), GetCurrentRoomSize(data_json, "height"), "GameMaker Anywhere - Dreamcast");
+		SetTargetFPS(60);
 
+		if (!IsAudioDeviceReady()) {
+			InitAudioDevice();
+		}
 
+		progCond = !WindowShouldClose();
+	#endif
 
-	//run every frame
-	while (true)
+	//"Step" event
+	while (progCond)
 	{
-		//scan for inputs
-		hidScanInput();
-		g_keysDown = hidKeysDown();
-		g_keysHeld = hidKeysHeld();
-		g_keysUp = hidKeysUp();
+		#ifdef __3DS__
 
+			//scan for inputs
+			hidScanInput();
+			g_keysDown = hidKeysDown();
+			g_keysHeld = hidKeysHeld();
+			g_keysUp = hidKeysUp();
+
+		#endif
+
+		#ifdef __RAYLIB__
+			BeginDrawing();
+			ClearBackground(BLACK);
+		#endif
 		//run the gml interpreter
 		RunGML();
 
@@ -415,26 +424,33 @@ int main()
 			break;
 
 		//render frames
-		if (is_running3DS())
-			scr_renderframe_3DS(top, cam_x, cam_y, cam_w, cam_h, SpriteCount, data_json, CurrentRoom);
+		#ifdef __3DS__
+			scr_renderframe(top, cam_x, cam_y, cam_w, cam_h, SpriteCount, data_json, CurrentRoom);
+		#elif __RAYLIB__
+			scr_renderframe((RenderTexture2D){ .texture = { .id = 0 }, .depth = { .id = 0 } }, cam_x, cam_y, cam_w, cam_h, SpriteCount, data_json, CurrentRoom);
+
+			EndDrawing();
+		#endif
 	}
 
-
-
 	#pragma region //end app
-	
 	//3ds
-	if (is_running3DS()){
+	#ifdef __3DS__
 		C2D_SpriteSheetFree(spriteSheet);
 		C2D_Fini();
 		C3D_Fini();
 		gfxExit();
 		romfsExit();
 		return 0;
-	}
-
+	#endif
 
 	free(data_json);
 	cJSON_Delete(root);
+
+	#ifdef __RAYLIB__
+		CloseAudioDevice();
+		CloseWindow();
+	#endif
+
 	#pragma endregion
 }
