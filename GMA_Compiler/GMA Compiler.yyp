@@ -1,6 +1,6 @@
 {
   "$GMProject":"v1",
-  "%Name":"Gamemaker 3ds runner UI",
+  "%Name":"GMA Compiler",
   "AudioGroups":[
     {"$GMAudioGroup":"v1","%Name":"audiogroup_default","exportDir":"","name":"audiogroup_default","resourceType":"GMAudioGroup","resourceVersion":"2.0","targets":-1,},
   ],
@@ -32,7 +32,7 @@
   "MetaData":{
     "IDEVersion":"2024.14.2.213",
   },
-  "name":"Gamemaker 3ds runner UI",
+  "name":"GMA Compiler",
   "resources":[
     {"id":{"name":"obj_bg_manager","path":"objects/obj_bg_manager/obj_bg_manager.yy",},},
     {"id":{"name":"obj_compiler","path":"objects/obj_compiler/obj_compiler.yy",},},
