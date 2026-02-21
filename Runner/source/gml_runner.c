@@ -669,7 +669,6 @@ void GML_interpret(const char* code, int object_def_index){
 	runner_interpret_xy(object_def_index, code);
 	runner_interpret_room_goto(object_def_index, code);
 	runner_interpret_game_end(object_def_index, code);
-	runner_interpret_game_end(object_def_index, code);
 }
 
 //runs the create code (on object creation)
