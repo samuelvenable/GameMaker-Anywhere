@@ -9,7 +9,6 @@
 #include "main.h"
 static const cJSON* root = NULL;
 
-
 static void quick_printfakecursor(const char* fakecursor){
 	printf("fakecursor at:       %c\n", *fakecursor);
 }
@@ -669,6 +668,7 @@ static void runner_interpret_game_end(int object_index, const char* code)
 void GML_interpret(const char* code, int object_def_index){
 	runner_interpret_xy(object_def_index, code);
 	runner_interpret_room_goto(object_def_index, code);
+	runner_interpret_game_end(object_def_index, code);
 	runner_interpret_game_end(object_def_index, code);
 }
 
