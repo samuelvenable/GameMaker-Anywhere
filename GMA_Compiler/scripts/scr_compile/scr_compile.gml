@@ -146,8 +146,11 @@ function scr_compile()
             
             array_push(all_rooms, {
                 name: yyfile.name,
-                width: yyfile.roomSettings.Width,
-                height: yyfile.roomSettings.Height,
+                roomwidth: yyfile.roomSettings.Width,
+                roomheight: yyfile.roomSettings.Height,
+				viewsenabled: yyfile.viewSettings.enableViews,
+				viewport0_width: yyfile.views[0].wview,
+				viewport0_height: yyfile.views[0].hview,
                 layers: packed_layers
             });
         }

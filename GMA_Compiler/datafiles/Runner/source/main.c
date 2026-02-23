@@ -97,10 +97,39 @@ static float GetCurrentRoomSize(const char* json_text, const char* mode)
 			continue;
 
 		if (strcmp(mode, "height") == 0 || strcmp(mode, "Height") == 0)
-			output = (float)cJSON_GetObjectItemCaseSensitive(room, "height")->valuedouble;
+			output = (float)cJSON_GetObjectItemCaseSensitive(room, "roomheight")->valuedouble;
 
 		if (strcmp(mode, "width") == 0 || strcmp(mode, "Width") == 0)
-			output = (float)cJSON_GetObjectItemCaseSensitive(room, "width")->valuedouble;
+			output = (float)cJSON_GetObjectItemCaseSensitive(room, "roomwidth")->valuedouble;
+
+		break;
+	}
+
+	cJSON_Delete(root);
+	return output;
+}
+
+//return the viewports size
+static float GetViewPortSize(const char* json_text, const char* mode)
+{
+	float output = 0;
+	
+	cJSON* root = cJSON_Parse(json_text);
+	cJSON* all_rooms = cJSON_GetObjectItemCaseSensitive(cJSON_GetObjectItemCaseSensitive(root, "Rooms"), "all_rooms");
+	cJSON* room = NULL;
+
+	cJSON_ArrayForEach(room, all_rooms)
+	{
+		cJSON* roomname = cJSON_GetObjectItemCaseSensitive(room, "name");
+		
+		if (!roomname || strcmp(roomname->valuestring, CurrentRoom) != 0)
+			continue;
+
+		if (strcmp(mode, "height") == 0 || strcmp(mode, "Height") == 0)
+			output = (float)cJSON_GetObjectItemCaseSensitive(room, "viewport0_height")->valuedouble;
+
+		if (strcmp(mode, "width") == 0 || strcmp(mode, "Width") == 0)
+			output = (float)cJSON_GetObjectItemCaseSensitive(room, "viewport0_width")->valuedouble;
 
 		break;
 	}
@@ -292,9 +321,35 @@ static void Runner_ClearRoomState(void)
 //Init the current room (create assets, objects, run creation code, ect)
 void InitCurrentRoom(const char* json_text)
 {
+	cJSON* root = cJSON_Parse(json_text);
+	cJSON* all_rooms = cJSON_GetObjectItemCaseSensitive(cJSON_GetObjectItemCaseSensitive(root, "Rooms"), "all_rooms");
+	cJSON* room = NULL;
+
+	//clear the previous room
 	Runner_ClearRoomState();
+
+	//create new objects and assets
 	CreateCurrentRoomAssets(json_text);
 	CreateCurrentRoomObjects(json_text);
+
+
+	//set room size
+	cJSON_ArrayForEach(room, all_rooms)
+	{
+		cJSON* roomname = cJSON_GetObjectItemCaseSensitive(room, "name");
+		bool viewsEnabled = cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(room, "viewsenabled"));
+
+		if (viewsEnabled){
+			cam_w = GetViewPortSize(json_text, "width");
+			cam_h = GetViewPortSize(json_text, "height");
+		}
+		else{
+			cam_w = GetCurrentRoomSize(json_text, "width");
+			cam_h = GetCurrentRoomSize(json_text, "height");
+		}
+
+		break;
+	}
 }
 
 
@@ -356,10 +411,6 @@ int main()
 
 	//load the first room
 	InitCurrentRoom(data_json);
-	
-	//set room size
-	cam_w = GetCurrentRoomSize(data_json, "width");
-	cam_h = GetCurrentRoomSize(data_json, "height");
 		
 	cJSON* root = cJSON_Parse(data_json);
 	//carry root to gml_runner
