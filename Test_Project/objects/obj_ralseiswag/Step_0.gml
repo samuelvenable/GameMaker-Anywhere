@@ -30,11 +30,4 @@ if (gamepad_button_check_released(4, gp_face1)){
 	y = 500;
 }
 
-if (x == 0){
-	x = 500;
-}
-
-if (y == 0){
-	y = 500;
-}
-
+camera_set_view_pos(view_camera[0],x,y);

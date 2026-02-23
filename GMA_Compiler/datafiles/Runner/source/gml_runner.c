@@ -585,6 +585,126 @@ static void runner_interpret_room_goto(int object_index, const char* code)
 }
 #pragma endregion
 
+static void runner_interpret_camera_set_view_pos(int object_index, const char* code)
+{
+	float object_x = sprites[object_index].spr.params.pos.x;
+	float object_y = sprites[object_index].spr.params.pos.y;
+    const char* cursor = code;
+
+    while (*cursor != '\0')
+    {
+		#pragma region //if handling
+		//is this an if??
+		if (cursor[0] == 'i' && cursor[1] == 'f')
+		{
+			bool if_result = runner_interpret_if(cursor, object_x, object_y);
+
+			if (if_result)
+			{
+				while (*cursor && *cursor != '{')
+					cursor++;
+
+				if (*cursor == '{')
+					cursor++; // enter block
+			}
+			else
+			{
+				while (*cursor && *cursor != '{')
+					cursor++;
+
+				cursor = skip_block(cursor);
+			}
+		}
+		#pragma endregion
+
+        char character = *cursor;
+		const char* fakecursor = cursor;
+
+
+		//is this a camera_set_view_pos statment part 1
+		if (character == 'c'){
+			char function[256];
+			int i = 0;
+
+			//is this a room_camera_set_view_posgoto statment part 2
+			while (*fakecursor != '(' && *fakecursor != ' ' && *fakecursor != '\0'){
+				//add each character to the buffer
+				function[i++] = *fakecursor;
+				fakecursor++;
+			}
+			function[i] = '\0';
+
+			//break if this doesn't have a bracket at the end or isn't camera_set_view_pos
+			if (*fakecursor != '(' || strcmp(function, "camera_set_view_pos") != 0)
+				break;
+
+            //skip the (
+            fakecursor++;
+
+			char view[256];
+			int view_i = 0;
+			while (*fakecursor != ',' && *fakecursor != '\0'){
+				//add each character to the buffer
+				view[view_i++] = *fakecursor;
+				fakecursor++;
+			}
+			view[view_i] = '\0';
+
+			//skip the ,
+            fakecursor++;
+			
+			char xpos[256];
+			int xpos_i = 0;
+			while (*fakecursor != ',' && *fakecursor != ')' && *fakecursor != '\0'){
+				//add each character to the buffer
+				xpos[xpos_i++] = *fakecursor;
+				fakecursor++;
+			}
+			xpos[xpos_i] = '\0';
+
+			//skip the ,
+            fakecursor++;
+
+			while (*fakecursor == ' ')
+				fakecursor++;
+
+			char ypos[256];
+			int ypos_i = 0;
+			while (*fakecursor != ',' && *fakecursor != ')' && *fakecursor != '\0'){
+				//add each character to the buffer
+				ypos[ypos_i++] = *fakecursor;
+				fakecursor++;
+			}
+			ypos[ypos_i] = '\0';
+
+			while (*fakecursor == ' ')
+				fakecursor++;
+										
+			if (strcmp(xpos, "x") == 0)
+				cam_x = object_x / 3.4f;
+			else if (strcmp(xpos, "y") == 0)
+				cam_x = object_y / 3.4f;
+			else
+				cam_x = (float)atof(xpos) / 3.4f;
+
+			if (strcmp(ypos, "x") == 0)
+				cam_y = object_x / 3.2f;
+			else if (strcmp(ypos, "y") == 0)
+				cam_y = object_y / 3.2f;
+			else
+				cam_y = (float)atof(ypos) / 3.2f;
+
+
+            cursor = fakecursor;
+        }
+
+        if (fakecursor == cursor)
+            cursor++;
+        else
+            cursor = fakecursor;
+    }
+}
+
 #pragma region //random stuff
 static void runner_interpret_game_end(int object_index, const char* code)
 {
@@ -669,6 +789,7 @@ void GML_interpret(const char* code, int object_def_index){
 	runner_interpret_xy(object_def_index, code);
 	runner_interpret_room_goto(object_def_index, code);
 	runner_interpret_game_end(object_def_index, code);
+	runner_interpret_camera_set_view_pos(object_def_index, code);
 }
 
 //runs the create code (on object creation)
