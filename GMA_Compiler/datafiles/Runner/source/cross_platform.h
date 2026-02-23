@@ -3,7 +3,8 @@
 #ifdef __3DS__
     #include <3ds.h>
     #include <citro2d.h>
-
+    #define screen_w 400.0f;
+    #define screen_h 240.0f;
 
 u32 GetCurrentRoomBgColor(const char* json_text, const char* room_name);
 void scr_renderframe(C3D_RenderTarget* topscreen, float camerax, float cameray, float camera_width, float camera_height, size_t currentsprite_count, char* datajson, const char* my_currentroom);

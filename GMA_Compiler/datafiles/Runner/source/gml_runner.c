@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "main.h"
+#include "cross_platform.h"
 static const cJSON* root = NULL;
 
 static void quick_printfakecursor(const char* fakecursor){
@@ -679,20 +680,23 @@ static void runner_interpret_camera_set_view_pos(int object_index, const char* c
 
 			while (*fakecursor == ' ')
 				fakecursor++;
-										
+													
+			const float scale_x = (float)cam_w / screen_w;
+			const float scale_y = (float)cam_h / screen_h;
+
 			if (strcmp(xpos, "x") == 0)
-				cam_x = object_x / 3.4f;
+				cam_x = object_x / scale_x;
 			else if (strcmp(xpos, "y") == 0)
-				cam_x = object_y / 3.4f;
+				cam_x = object_y / scale_x;
 			else
-				cam_x = (float)atof(xpos) / 3.4f;
+				cam_x = (float)atof(xpos) / scale_x;
 
 			if (strcmp(ypos, "x") == 0)
-				cam_y = object_x / 3.2f;
+				cam_y = object_x / scale_y;
 			else if (strcmp(ypos, "y") == 0)
-				cam_y = object_y / 3.2f;
+				cam_y = object_y / scale_y;
 			else
-				cam_y = (float)atof(ypos) / 3.2f;
+				cam_y = (float)atof(ypos) / scale_y;
 
 
             cursor = fakecursor;
