@@ -64,10 +64,11 @@
   "isEcma":false,
   "LibraryEmitters":[],
   "MetaData":{
-    "IDEVersion":"2024.14.2.213",
+    "IDEVersion":"2024.14.3.217",
   },
   "name":"GMA Compiler",
   "resources":[
+    {"id":{"name":"libdlgmod","path":"extensions/libdlgmod/libdlgmod.yy",},},
     {"id":{"name":"libfilesystem","path":"extensions/libfilesystem/libfilesystem.yy",},},
     {"id":{"name":"libxprocess","path":"extensions/libxprocess/libxprocess.yy",},},
     {"id":{"name":"obj_bg_manager","path":"objects/obj_bg_manager/obj_bg_manager.yy",},},
