@@ -383,6 +383,19 @@ static const char* skip_block(const char* cursor)
 
 #pragma region //asigning values
 
+static void runner_set_vars_to_object(int object_index, Sprite* object)
+{
+    sprites[object_index].x = object->x;
+    sprites[object_index].y = object->y;
+    #ifdef __3DS__
+        sprites[object_index].spr.params.pos.x = sprites[object_index].x;
+        sprites[object_index].spr.params.pos.y = sprites[object_index].y;
+    #elif __RAYLIB__
+        sprites[object_index].texture.x = sprites[object_index].x;
+        sprites[object_index].texture.y = sprites[object_index].y;
+    #endif
+}
+
 static void runner_var_middleman(int object_index, var value)
 {
 	bool isCustomVariable = false;
@@ -411,10 +424,12 @@ static void runner_var_middleman(int object_index, var value)
 	}
 }
 
+var value = {0};
+
 //interpret variable of the objects
 static void runner_interpret_var(int object_index, const char* code, Sprite object)
 {
-	var value = {0};
+	runner_set_vars_to_object(object_index, &object);
 	bool isNumber = false;
 
     const char* cursor = code;
@@ -603,7 +618,6 @@ static void runner_interpret_var(int object_index, const char* code, Sprite obje
 			cursor = fakecursor;
 
 	}
-
 	printf("Setting variable:       %s\n", value.name);
 	printf("Result of variable:       %f\n", value.f);
 	runner_var_middleman(object_index, value);
