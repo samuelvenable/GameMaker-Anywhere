@@ -258,7 +258,7 @@ function scr_compile()
     };
     
 	directory_create(destination + "\\romfs\\");
-    var file = file_text_open_write(destination + "\\romfs\\" + "data.win");
+    var file = file_text_open_write(destination + "\\romfs\\" + "data.gad");
     file_text_write_string(file, json_stringify(export_json, true));
     file_text_close(file);
     file_text_close(t3s_file);

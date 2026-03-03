@@ -385,7 +385,7 @@ int main()
 		consoleInit(GFX_BOTTOM, NULL);
 
 		//load the data.win
-		FILE* datawin = fopen("romfs:/data.win", "rb");
+		FILE* datawin = fopen("romfs:/data.gad", "rb");
 		fseek(datawin, 0, SEEK_END);
 		long size = ftell(datawin);
 		fseek(datawin, 0, SEEK_SET);
@@ -403,7 +403,7 @@ int main()
 		spriteSheet = LoadTexture("assets/sprites.png");
 
 		//load the data.win
-		FILE* datawin = fopen("assets/data.win", "rb");
+		FILE* datawin = fopen("assets/data.gad", "rb");
 		fseek(datawin, 0, SEEK_END);
 		long size = ftell(datawin);
 		fseek(datawin, 0, SEEK_SET);
