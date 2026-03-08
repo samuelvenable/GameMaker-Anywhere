@@ -17,8 +17,7 @@ static void quick_printfakecursor(const char* fakecursor){
 
 #pragma region //shortcut stuff
 //carry over the root from the main.c (probably better way i could've done this...)
-void GML_SetRoot(const cJSON* garrys_in_the_room_tonight)
-{
+void GML_SetRoot(const cJSON* garrys_in_the_room_tonight){
 	root = garrys_in_the_room_tonight;
 }
 
@@ -384,7 +383,7 @@ static const char* skip_block(const char* cursor)
 #pragma region //asigning values
 
 static void runner_set_vars_to_object(int object_index, Sprite* object)
-{
+{ 
     sprites[object_index].x = object->x;
     sprites[object_index].y = object->y;
     #ifdef __3DS__
@@ -423,8 +422,6 @@ static void runner_var_middleman(int object_index, var value)
 			
 	}
 }
-
-var value = {0};
 
 //interpret variable of the objects
 static void runner_interpret_var(int object_index, const char* code, Sprite object)
@@ -502,9 +499,14 @@ static void runner_interpret_var(int object_index, const char* code, Sprite obje
 		}
 
 		// set final variable name
+		var value = {0};
 		strcpy(value.name, identifier);
-		//value.name[var_i] = '\0';
-		
+
+		if (strcmp(identifier, "x") == 0)
+			value.f = sprites[object_index].x;
+		if (strcmp(identifier, "y") == 0)
+			value.f = sprites[object_index].y;
+
 		if (*fakecursor == ' ')
 			fakecursor++;
 
@@ -608,9 +610,11 @@ static void runner_interpret_var(int object_index, const char* code, Sprite obje
 				} else {
 					//no usual type of variable found lol
 					return;
-					}
-				
+				}
 			}
+			printf("Setting variable:       %s\n", value.name);
+			printf("Result of variable:       %f\n", value.f);
+			runner_var_middleman(object_index, value);
 		}
 		if (fakecursor == cursor)
 			cursor++;
@@ -618,9 +622,6 @@ static void runner_interpret_var(int object_index, const char* code, Sprite obje
 			cursor = fakecursor;
 
 	}
-	printf("Setting variable:       %s\n", value.name);
-	printf("Result of variable:       %f\n", value.f);
-	runner_var_middleman(object_index, value);
 }
 
 //interpret x and y of the objects
@@ -828,6 +829,77 @@ static void runner_interpret_room_goto(int object_index, const char* code, Sprit
 }
 #pragma endregion
 
+#pragma region //random stuff
+static void runner_interpret_game_end(int object_index, const char* code, Sprite object)
+{
+	object.x = sprites[object_index].spr.params.pos.x;
+	object.y = sprites[object_index].spr.params.pos.y;
+    const char* cursor = code;
+
+    while (*cursor != '\0')
+    {
+		//is this an if??
+		if (cursor[0] == 'i' && cursor[1] == 'f')
+		{
+			bool if_result = runner_interpret_if(cursor, object);
+
+			if (if_result)
+			{
+				while (*cursor && *cursor != '{')
+					cursor++;
+
+				if (*cursor == '{')
+					cursor++; // enter block
+			}
+			else
+			{
+				while (*cursor && *cursor != '{')
+					cursor++;
+
+				cursor = skip_block(cursor);
+			}
+		}
+
+
+
+        char character = *cursor;
+		const char* fakecursor = cursor;
+        //printf("current char: %c\n", character);
+
+		//is this a game_end statment part 1
+		if (character == 'g'){
+			char function[256];
+			int i = 0;
+
+			//is this a game_end statment part 2
+			while (*fakecursor != '(' && *fakecursor != ' ' && *fakecursor != '\0'){
+				//add each character to the buffer
+				function[i++] = *fakecursor;
+				fakecursor++;
+			}
+			function[i] = '\0';
+
+			//break if this doesn't have a bracket at the end or isn't game_end
+			if (*fakecursor != '(' || strcmp(function, "game_end") != 0)
+				break;
+
+            //skip the (
+            fakecursor++;
+
+			//KILL THE GAME!!! EVILl!!!!!!!
+			EndGame = true;
+			printf("Quiting game! goodbye!\n");
+
+            cursor = fakecursor;
+        }
+
+        if (fakecursor == cursor)
+            cursor++;
+        else
+            cursor = fakecursor;
+    }
+}
+
 static void runner_interpret_camera_set_view_pos(int object_index, const char* code, Sprite object)
 {
 	object.x = sprites[object_index].spr.params.pos.x;
@@ -974,77 +1046,6 @@ static void runner_interpret_camera_set_view_pos(int object_index, const char* c
 
 
 
-
-            cursor = fakecursor;
-        }
-
-        if (fakecursor == cursor)
-            cursor++;
-        else
-            cursor = fakecursor;
-    }
-}
-
-#pragma region //random stuff
-static void runner_interpret_game_end(int object_index, const char* code, Sprite object)
-{
-	object.x = sprites[object_index].spr.params.pos.x;
-	object.y = sprites[object_index].spr.params.pos.y;
-    const char* cursor = code;
-
-    while (*cursor != '\0')
-    {
-		//is this an if??
-		if (cursor[0] == 'i' && cursor[1] == 'f')
-		{
-			bool if_result = runner_interpret_if(cursor, object);
-
-			if (if_result)
-			{
-				while (*cursor && *cursor != '{')
-					cursor++;
-
-				if (*cursor == '{')
-					cursor++; // enter block
-			}
-			else
-			{
-				while (*cursor && *cursor != '{')
-					cursor++;
-
-				cursor = skip_block(cursor);
-			}
-		}
-
-
-
-        char character = *cursor;
-		const char* fakecursor = cursor;
-        //printf("current char: %c\n", character);
-
-		//is this a game_end statment part 1
-		if (character == 'g'){
-			char function[256];
-			int i = 0;
-
-			//is this a game_end statment part 2
-			while (*fakecursor != '(' && *fakecursor != ' ' && *fakecursor != '\0'){
-				//add each character to the buffer
-				function[i++] = *fakecursor;
-				fakecursor++;
-			}
-			function[i] = '\0';
-
-			//break if this doesn't have a bracket at the end or isn't game_end
-			if (*fakecursor != '(' || strcmp(function, "game_end") != 0)
-				break;
-
-            //skip the (
-            fakecursor++;
-
-			//KILL THE GAME!!! EVILl!!!!!!!
-			EndGame = true;
-			printf("Quiting game! goodbye!\n");
 
             cursor = fakecursor;
         }

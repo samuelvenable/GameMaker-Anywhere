@@ -33,6 +33,7 @@
     {"$GMIncludedFile":"","%Name":"settings.json","CopyToMask":-1,"filePath":"datafiles/.vscode","name":"settings.json","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"tasks.json","CopyToMask":-1,"filePath":"datafiles/.vscode","name":"tasks.json","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"IGNOREME","CopyToMask":-1,"filePath":"datafiles/Runner/gfx","name":"IGNOREME","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+    {"$GMIncludedFile":"","%Name":"main.code-workspace","CopyToMask":-1,"filePath":"datafiles/Runner","name":"main.code-workspace","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"Makefile","CopyToMask":-1,"filePath":"datafiles/Runner","name":"Makefile","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"Makefile","CopyToMask":-1,"filePath":"datafiles/Runner/platform/3ds","name":"Makefile","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"Makefile","CopyToMask":-1,"filePath":"datafiles/Runner/platform/dc","name":"Makefile","resourceType":"GMIncludedFile","resourceVersion":"2.0",},

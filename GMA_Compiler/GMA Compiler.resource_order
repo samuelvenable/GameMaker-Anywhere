@@ -1,0 +1,11 @@
+{
+  "FolderOrderSettings":[],
+  "ResourceOrderSettings":[
+    {"name":"libfilesystem","order":2,"path":"extensions/libfilesystem/libfilesystem.yy",},
+    {"name":"libxprocess","order":3,"path":"extensions/libxprocess/libxprocess.yy",},
+    {"name":"obj_bg_manager","order":1,"path":"objects/obj_bg_manager/obj_bg_manager.yy",},
+    {"name":"obj_icon_manager","order":2,"path":"objects/obj_icon_manager/obj_icon_manager.yy",},
+    {"name":"run_commandcmd","order":1,"path":"scripts/run_commandcmd/run_commandcmd.yy",},
+    {"name":"spr_logo","order":1,"path":"sprites/spr_logo/spr_logo.yy",},
+  ],
+}
