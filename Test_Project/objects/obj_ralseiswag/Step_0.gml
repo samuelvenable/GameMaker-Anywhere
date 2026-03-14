@@ -1,19 +1,20 @@
 var device = 4;
+var _speed = 30;
 
 if (gamepad_button_check(device, gp_padr)){
-	x+= 5;
+	x+= _speed;
 }
 
 if (gamepad_button_check(device, gp_padu)){
-	y -=5;
+	y -=_speed;
 }
 
 if (gamepad_button_check(device, gp_padl)){
-	x -=5;
+	x -=_speed;
 }
 
 if (gamepad_button_check(device, gp_padd)){
-	y +=5;
+	y +=_speed;
 }
 
 if (gamepad_button_check(device, gp_face2)){
