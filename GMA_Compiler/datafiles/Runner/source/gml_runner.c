@@ -612,8 +612,9 @@ static void runner_interpret_var(int object_index, const char* code, Sprite obje
 					return;
 				}
 			}
-			printf("Setting variable:       %s\n", value.name);
-			printf("Result of variable:       %f\n", value.f);
+			//these made the game lag :3
+			//printf("Setting variable:       %s\n", value.name);
+			//printf("Result of variable:       %f\n", value.f);
 			runner_var_middleman(object_index, value);
 		}
 		if (fakecursor == cursor)

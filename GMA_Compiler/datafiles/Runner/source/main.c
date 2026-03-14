@@ -452,37 +452,35 @@ int main()
 	#pragma endregion
 
 	#ifdef __RAYLIB__
-		InitWindow(GetCurrentRoomSize(data_json, "width"), GetCurrentRoomSize(data_json, "height"), GetGameName(data_json)->valuestring);
-		SetTargetFPS(60);
-
-		if (!IsAudioDeviceReady()) {
-			InitAudioDevice();
-		}
-
-		progCond = !WindowShouldClose();
+		while (!WindowShouldClose())
+	#elif __3DS__
+		while (aptMainLoop())
 	#endif
-
-	//"Step" event
-	while (progCond)
 	{
 		#ifdef __3DS__
-
 			//scan for inputs
 			hidScanInput();
 			g_keysDown = hidKeysDown();
 			g_keysHeld = hidKeysHeld();
 			g_keysUp = hidKeysUp();
-
 		#endif
 
 		#ifdef __RAYLIB__
+			InitWindow(GetCurrentRoomSize(data_json, "width"), GetCurrentRoomSize(data_json, "height"), GetGameName(data_json)->valuestring);
+			SetTargetFPS(60);
+
+			if (!IsAudioDeviceReady()) {
+				InitAudioDevice();
+			}
+
 			BeginDrawing();
 			ClearBackground(BLACK);
 		#endif
+
 		//run the gml interpreter
 		RunGML();
 
-		//Quit quit app
+		//Quit app
 		if (EndGame)
 			break;
 

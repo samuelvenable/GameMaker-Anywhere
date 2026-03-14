@@ -1,5 +1,9 @@
-#include <3ds.h>
 #include "cJSON.h"
+
+
+#ifdef __3DS__
+    #include <3ds.h>
+#endif
 
 extern const char* CurrentRoom;
 extern char* data_json;
