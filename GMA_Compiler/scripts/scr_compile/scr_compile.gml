@@ -12,28 +12,15 @@ function scr_compile()
 
 
 	//kill the previous build
-	if (global.compile_waiting_delete){
-	    if (!directory_exists("C:\\GM_Anywhere")){
-	        global.compile_waiting_delete = false;
-	        global.compile_delete_started = false;
-	    }
-	    else{
-	        alarm[0] = 1;
-	        exit;
-	    }
-	}
-
-    if (directory_exists("C:\\GM_Anywhere")){
-        if (!global.compile_delete_started){
-            global.compile_delete_started = true;
+    if (directory_exists("C:\\GM_Anywhere") && deletedlastcompile == false){
+        if (!deleting_lastcompile){
+            deleting_lastcompile = true;
             run_commandpowershell("C:\\", "Remove-Item -LiteralPath 'C:\\GM_Anywhere' -Recurse -Force -ErrorAction SilentlyContinue");
-            global.compile_waiting_delete = true;
         }
-		
-        alarm[0] = 1;
         exit;
     }
 
+	deletedlastcompile = true;
 
     
 	directory_create("C:\\GM_Anywhere");
@@ -259,12 +246,14 @@ function scr_compile()
         }
     };
     
+	//create the data file
 	directory_create(destination + "\\romfs\\");
     var file = file_text_open_write(destination + "\\romfs\\" + "data.gad");
     file_text_write_string(file, json_stringify(export_json, true));
     file_text_close(file);
     file_text_close(t3s_file);
 	
+	//create the 3ds app info
 	var appinfo = file_text_open_write(destination + "\\resources\\AppInfo");
 	file_text_write_string(appinfo, "APP_TITLE = " + global.game_name + "\n"
 	+ "APP_DESCRIPTION = " + "Created with GameMaker Anywhere!\n"
@@ -276,6 +265,7 @@ function scr_compile()
 	+ "APP_VERSION_MICRO = " + "0\n");
 	file_text_close(appinfo);
 	
+	//copy icon
 	if (global.iconpath != ""){
 		file_delete(destination + "\\resources\\icon.png")
         file_copy(global.iconpath, destination + "\\resources\\icon.png");
@@ -289,5 +279,10 @@ function scr_compile()
 	if (global.export_mode == 1)
 		run_commandpowershell("C:\\GM_Anywhere\\Runner", "& make 3dsx;");
 		
+	//reset vars
+	deletedlastcompile = false;
+	deleting_lastcompile = false;
+	
+	//finsih!!!	
 	show_message("Compiling now!\nCheck " + destination + "\\output\\ " + " For the rom!")
 }

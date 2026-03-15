@@ -1,5 +1,5 @@
-global.compile_waiting_delete = false;
-global.compile_delete_started = false;
+deleting_lastcompile = false;
+deletedlastcompile = false;
 global.selected_yyp = "";
 global.game_name = "";
 global.title_id = "";
