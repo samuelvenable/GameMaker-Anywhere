@@ -23,3 +23,11 @@ if (global.current_field >= 0) {
             break;
     }
 }
+
+if (deleting_lastcompile){
+	if (!directory_exists("C:\\GM_Anywhere")){
+		deleting_lastcompile = false;
+		deletedlastcompile = true;
+		scr_compile();
+	}
+}

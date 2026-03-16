@@ -64,6 +64,17 @@ int GetSpriteNumberByName(const cJSON* root, const char* sprite_name)
 	return -1;
 }
 
+//return the name of the game
+static cJSON* GetGameName(const char* json_text)
+{
+    cJSON* root = cJSON_Parse(json_text);
+    cJSON* Game_name = cJSON_GetObjectItemCaseSensitive(cJSON_GetObjectItemCaseSensitive(root, "GameMetadata"), "name");
+    cJSON* output = cJSON_CreateString(Game_name->valuestring);
+    cJSON_Delete(root);
+	
+    return output;
+}
+
 //return the room set to be the first loaded
 static cJSON* GetFirstRoomName(const char* json_text)
 {
@@ -316,6 +327,7 @@ static void Runner_ClearRoomState(void)
     memset(sprites, 0, sizeof(sprites));
     memset(sprite_object_id, 0, sizeof(sprite_object_id));
     memset(sprite_is_object, 0, sizeof(sprite_is_object));
+    GML_ResetCustomVariables();
 }
 
 //Init the current room (create assets, objects, run creation code, ect)
@@ -374,7 +386,7 @@ int main()
 		consoleInit(GFX_BOTTOM, NULL);
 
 		//load the data.win
-		FILE* datawin = fopen("romfs:/data.win", "rb");
+		FILE* datawin = fopen("romfs:/data.gad", "rb");
 		fseek(datawin, 0, SEEK_END);
 		long size = ftell(datawin);
 		fseek(datawin, 0, SEEK_SET);
@@ -392,7 +404,7 @@ int main()
 		spriteSheet = LoadTexture("assets/sprites.png");
 
 		//load the data.win
-		FILE* datawin = fopen("assets/data.win", "rb");
+		FILE* datawin = fopen("assets/data.gad", "rb");
 		fseek(datawin, 0, SEEK_END);
 		long size = ftell(datawin);
 		fseek(datawin, 0, SEEK_SET);
@@ -441,37 +453,35 @@ int main()
 	#pragma endregion
 
 	#ifdef __RAYLIB__
-		InitWindow(GetCurrentRoomSize(data_json, "width"), GetCurrentRoomSize(data_json, "height"), "GameMaker Anywhere - Dreamcast");
-		SetTargetFPS(60);
-
-		if (!IsAudioDeviceReady()) {
-			InitAudioDevice();
-		}
-
-		progCond = !WindowShouldClose();
+		while (!WindowShouldClose())
+	#elif __3DS__
+		while (aptMainLoop())
 	#endif
-
-	//"Step" event
-	while (progCond)
 	{
 		#ifdef __3DS__
-
 			//scan for inputs
 			hidScanInput();
 			g_keysDown = hidKeysDown();
 			g_keysHeld = hidKeysHeld();
 			g_keysUp = hidKeysUp();
-
 		#endif
 
 		#ifdef __RAYLIB__
+			InitWindow(GetCurrentRoomSize(data_json, "width"), GetCurrentRoomSize(data_json, "height"), GetGameName(data_json)->valuestring);
+			SetTargetFPS(60);
+
+			if (!IsAudioDeviceReady()) {
+				InitAudioDevice();
+			}
+
 			BeginDrawing();
 			ClearBackground(BLACK);
 		#endif
+
 		//run the gml interpreter
 		RunGML();
 
-		//Quit quit app
+		//Quit app
 		if (EndGame)
 			break;
 

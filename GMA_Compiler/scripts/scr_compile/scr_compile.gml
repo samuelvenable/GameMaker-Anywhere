@@ -12,28 +12,15 @@ function scr_compile()
 
 
 	//kill the previous build
-	if (global.compile_waiting_delete){
-	    if (!directory_exists("C:\\GM_Anywhere")){
-	        global.compile_waiting_delete = false;
-	        global.compile_delete_started = false;
-	    }
-	    else{
-	        alarm[0] = 1;
-	        exit;
-	    }
-	}
-
-    if (directory_exists("C:\\GM_Anywhere")){
-        if (!global.compile_delete_started){
-            global.compile_delete_started = true;
+    if (directory_exists("C:\\GM_Anywhere") && deletedlastcompile == false){
+        if (!deleting_lastcompile){
+            deleting_lastcompile = true;
             run_commandpowershell("C:\\", "Remove-Item -LiteralPath 'C:\\GM_Anywhere' -Recurse -Force -ErrorAction SilentlyContinue");
-            global.compile_waiting_delete = true;
         }
-		
-        alarm[0] = 1;
         exit;
     }
 
+	deletedlastcompile = true;
 
     
 	directory_create("C:\\GM_Anywhere");
@@ -137,7 +124,7 @@ function scr_compile()
                 if (_layer.resourceType == "GMRBackgroundLayer") {
                     layer_out.background = {
                         colour: _layer.colour,
-                        sprite: (_layer.spriteId != undefined && _layer.spriteId != null ? _layer.spriteId.name : "")
+                        sprite: (_layer.spriteId != undefined && _layer.spriteId != -4 ? _layer.spriteId.name : "")
                     };
                 }
                 
@@ -207,14 +194,16 @@ function scr_compile()
             
             if (file_exists(createpath)) {
                 var createinside_buffer = buffer_load(createpath);
-                create_code = buffer_read(createinside_buffer, buffer_string);
+				if (buffer_get_size(createinside_buffer) > 0)
+					create_code = buffer_read(createinside_buffer, buffer_string);
                 buffer_delete(createinside_buffer);
                 show_debug_message(create_code);
             }
             
             if (file_exists(steppath)) {
                 var createinside_buffer = buffer_load(steppath);
-                step_code = buffer_read(createinside_buffer, buffer_string);
+				if (buffer_get_size(createinside_buffer) > 0)
+					step_code = buffer_read(createinside_buffer, buffer_string);
                 buffer_delete(createinside_buffer);
                 show_debug_message(step_code);
             }
@@ -257,19 +246,43 @@ function scr_compile()
         }
     };
     
+	//create the data file
 	directory_create(destination + "\\romfs\\");
-    var file = file_text_open_write(destination + "\\romfs\\" + "data.win");
+    var file = file_text_open_write(destination + "\\romfs\\" + "data.gad");
     file_text_write_string(file, json_stringify(export_json, true));
     file_text_close(file);
     file_text_close(t3s_file);
 	
+	//create the 3ds app info
+	var appinfo = file_text_open_write(destination + "\\resources\\AppInfo");
+	file_text_write_string(appinfo, "APP_TITLE = " + global.game_name + "\n"
+	+ "APP_DESCRIPTION = " + "Created with GameMaker Anywhere!\n"
+	+ "APP_AUTHOR = " + global.publisher + "\n"
+	+ "APP_PRODUCT_CODE = " + "Your-Code\n"
+	+ "APP_UNIQUE_ID = " +"0x" + global.title_id + "\n"
+	+ "APP_VERSION_MAJOR = " + "1\n"
+	+ "APP_VERSION_MINOR = " + "0\n"
+	+ "APP_VERSION_MICRO = " + "0\n");
+	file_text_close(appinfo);
+	
+	//copy icon
+	if (global.iconpath != ""){
+		file_delete(destination + "\\resources\\icon.png")
+        file_copy(global.iconpath, destination + "\\resources\\icon.png");
+	}
+	
 	//cia
-	if (global.export_mode = 0)
+	if (global.export_mode == 0)
 		run_commandpowershell("C:\\GM_Anywhere\\Runner", "& make cia;");
 			
 	//3dsx
-	if (global.export_mode = 1)
+	if (global.export_mode == 1)
 		run_commandpowershell("C:\\GM_Anywhere\\Runner", "& make 3dsx;");
 		
+	//reset vars
+	deletedlastcompile = false;
+	deleting_lastcompile = false;
+	
+	//finsih!!!	
 	show_message("Compiling now!\nCheck " + destination + "\\output\\ " + " For the rom!")
 }
